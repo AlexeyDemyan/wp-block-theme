@@ -86,6 +86,9 @@ function university_features()
     add_image_size('pageBanner', 1500, 350, true);
     // Here we have more control over cropping, but the issue is that this cropping will be applied to ALL:
     // add_image_size('professorPortrait', 480, 650, array('left', 'top'));
+
+    add_theme_support('editor-styles');
+    add_editor_style(array('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i', 'build/style-index.css', 'build/index.css'));
 };
 
 add_action('after_setup_theme', 'university_features');
@@ -195,10 +198,10 @@ add_filter('login_headertitle', 'customLoginTitle');
 function makeNotePrivate($data, $postarr)
 {
     // Sanitizing Note content to make sure that even basic HTML does not go through
-    if($data['post_type'] == 'note') {
+    if ($data['post_type'] == 'note') {
         // Implementing post amount limit per user: checking if current user ID already has more than 4 posts of type 'note'
         // Also checking if there is no post ID, which means this is a new post:
-        if(count_user_posts(get_current_user_id(), 'note') > 4 AND !$postarr['ID']) {
+        if (count_user_posts(get_current_user_id(), 'note') > 4 and !$postarr['ID']) {
             // Lol what :) So this stops further code execution and returns message in responseText
             die("You have reached your note limit!");
         }
@@ -208,7 +211,7 @@ function makeNotePrivate($data, $postarr)
     }
 
     // Making sure that when subscribers create Notes, they don't stay in Draft and are immediately visible in Private
-    if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash') {
+    if ($data['post_type'] == 'note' and $data['post_status'] != 'trash') {
         $data['post_status'] = 'private';
     }
     return $data;
@@ -219,3 +222,13 @@ function makeNotePrivate($data, $postarr)
 // The priority is an issue only if there are multiple functions running on the same hook
 // But here we still need to specify because we need to access the 4th argument
 add_filter('wp_insert_post_data', 'makeNotePrivate', 1, 2);
+
+add_action('init', 'bannerBlock');
+
+function bannerBlock()
+{
+    wp_register_script('bannerBlockScript', get_stylesheet_directory_uri() . '/build/banner.js', array('wp-blocks', 'wp-editor'));
+    register_block_type('customblocktheme/banner', array(
+        'editor_script' => 'bannerBlockScript'
+    ));
+}
