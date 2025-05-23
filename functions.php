@@ -223,12 +223,22 @@ function makeNotePrivate($data, $postarr)
 // But here we still need to specify because we need to access the 4th argument
 add_filter('wp_insert_post_data', 'makeNotePrivate', 1, 2);
 
-add_action('init', 'bannerBlock');
-
-function bannerBlock()
+class JSXBlock
 {
-    wp_register_script('bannerBlockScript', get_stylesheet_directory_uri() . '/build/banner.js', array('wp-blocks', 'wp-editor'));
-    register_block_type('customblocktheme/banner', array(
-        'editor_script' => 'bannerBlockScript'
-    ));
+    function __construct($name)
+    {
+        $this->name = $name;
+        add_action('init', [$this, 'onInit']);
+    }
+
+    function onInit()
+    {
+        wp_register_script($this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array('wp-blocks', 'wp-editor'));
+        register_block_type("customblocktheme/{$this->name}", array(
+            'editor_script' => $this->name
+        ));
+    }
 }
+
+new JSXBlock('banner');
+new JSXBlock('genericheading');
