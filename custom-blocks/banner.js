@@ -33,7 +33,13 @@ function editComponent() {
         }}
       ></div>
       <div className='page-banner__content container t-center c-white'>
-        <InnerBlocks allowedBlocks={["core/paragraph", "core/heading", "core/list"]}/>
+        <InnerBlocks
+          allowedBlocks={[
+            'customblocktheme/genericheading',
+            'core/paragraph',
+            'core/list',
+          ]}
+        />
       </div>
     </div>
   );
