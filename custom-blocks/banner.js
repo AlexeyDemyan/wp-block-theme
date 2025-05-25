@@ -1,4 +1,12 @@
-import { InnerBlocks } from '@wordpress/block-editor';
+import apiFetch from '@wordpress/api-fetch';
+import { Button, PanelBody, PanelRow } from '@wordpress/components';
+import {
+  InnerBlocks,
+  InspectorControls,
+  MediaUpload,
+  MediaUploadCheck,
+} from '@wordpress/block-editor';
+import { useEffect } from '@wordpress/element';
 
 wp.blocks.registerBlockType('customblocktheme/banner', {
   title: 'banner',
@@ -6,54 +14,74 @@ wp.blocks.registerBlockType('customblocktheme/banner', {
     align: ['full'],
   },
   attributes: {
-    align: { type: 'text', default: 'full' },
+    align: { type: 'string', default: 'full' },
+    imgID: { type: 'number' },
+    imgURL: { type: 'string' },
   },
   edit: editComponent,
   save: saveComponent,
 });
 
-function editComponent() {
-  const useMeLater = (
-    <>
-      <h1 className='headline headline--large'>Welcome!</h1>
-      <h2 className='headline headline--medium'>
-        We think you&rsquo;ll like it here.
-      </h2>
-      <h3 className='headline headline--small'>
-        Why don&rsquo;t you check out the <strong>major</strong> you&rsquo;re
-        interested in?
-      </h3>
-      <a href='#' className='btn btn--large btn--blue'>
-        Find Your Major
-      </a>
-    </>
-  );
+function editComponent(props) {
+  useEffect(() => {
+    async function go() {
+      const response = await apiFetch({
+        path: `/wp/v2/media/${props.attributes.imdID}`,
+        method: 'GET'
+      });
+      props.setAttributes({
+        imgURL: response.media_details.sizes.pageBanner.source_url,
+      });
+    }
+    go();
+  }, [props.attributes.imdID]);
+
+  function onFileSelect(pic) {
+    console.log(pic);
+    props.setAttributes({ imdID: pic.id });
+  }
 
   return (
-    <div className='page-banner'>
-      <div
-        className='page-banner__bg-image'
-        style={{
-          backgroundImage:
-            "url('/wp-content/themes/fict-block-theme/images/library-hero.jpg')",
-        }}
-      ></div>
-      <div className='page-banner__content container t-center c-white'>
-        <InnerBlocks
-          allowedBlocks={[
-            'customblocktheme/genericheading',
-            'customblocktheme/genericbutton',
-            'core/paragraph',
-            'core/list',
-          ]}
-        />
+    <>
+      <InspectorControls>
+        <PanelBody title='Background' initialOpen={true}>
+          <PanelRow>
+            {/* MediaUploadCheck check if current user has permissions to upload media */}
+            <MediaUploadCheck>
+              <MediaUpload
+                onSelect={onFileSelect}
+                value={props.attributes.imdID}
+                render={({ open }) => {
+                  return <Button onClick={open}>Choose Image</Button>;
+                }}
+              />
+            </MediaUploadCheck>
+          </PanelRow>
+        </PanelBody>
+      </InspectorControls>
+      <div className='page-banner'>
+        <div
+          className='page-banner__bg-image'
+          style={{
+            backgroundImage:
+              `url('${props.attributes.imgURL}')`,
+          }}
+        ></div>
+        <div className='page-banner__content container t-center c-white'>
+          <InnerBlocks
+            allowedBlocks={[
+              'customblocktheme/genericheading',
+              'customblocktheme/genericbutton',
+              'core/paragraph',
+              'core/list',
+            ]}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function saveComponent() {
-  return (
-    <InnerBlocks.Content/>
-  );
+  return <InnerBlocks.Content />;
 }
