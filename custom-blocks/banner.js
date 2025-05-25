@@ -42,6 +42,7 @@ function editComponent() {
         <InnerBlocks
           allowedBlocks={[
             'customblocktheme/genericheading',
+            'customblocktheme/genericbutton',
             'core/paragraph',
             'core/list',
           ]}
