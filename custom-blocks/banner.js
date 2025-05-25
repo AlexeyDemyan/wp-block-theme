@@ -2,6 +2,12 @@ import { InnerBlocks } from '@wordpress/block-editor';
 
 wp.blocks.registerBlockType('customblocktheme/banner', {
   title: 'banner',
+  supports: {
+    align: ['full'],
+  },
+  attributes: {
+    align: { type: 'text', default: 'full' },
+  },
   edit: editComponent,
   save: saveComponent,
 });
