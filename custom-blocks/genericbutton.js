@@ -4,23 +4,33 @@ import {
   ToolbarButton,
   Popover,
   Button,
+  PanelBody,
+  PanelRow,
+  ColorPalette,
 } from '@wordpress/components';
 import {
   RichText,
+  InspectorControls,
   BlockControls,
   __experimentalLinkControl as LinkControl,
+  getColorObjectByColorValue,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
+import customColors from "../includes/customColors.js"
 
 registerBlockType('customblocktheme/genericbutton', {
   title: 'Generic Button',
   attributes: {
     text: { type: 'string' },
     size: { type: 'string', default: 'large' },
-    linkObject: { type: 'object', default: {
-        url: ""
-    } },
+    linkObject: {
+      type: 'object',
+      default: {
+        url: '',
+      },
+    },
+    colorName: { type: 'string', default: 'blue' },
   },
   edit: editComponent,
   save: saveComponent,
@@ -39,6 +49,16 @@ function editComponent(props) {
 
   function handleLinkChange(newLink) {
     props.setAttributes({ linkObject: newLink });
+  }
+
+  const currentColorValue = customColors.filter((color) => {
+    return color.name == props.attributes.colorName;
+  })[0].color;
+
+  function handleColorChange(colorCode) {
+    // taking hex value that color palette gives, and finding its name
+    const { name } = getColorObjectByColorValue(customColors, colorCode);
+    props.setAttributes({ colorName: name });
   }
 
   return (
@@ -74,11 +94,24 @@ function editComponent(props) {
           </ToolbarButton>
         </ToolbarGroup>
       </BlockControls>
+      <InspectorControls>
+        <PanelBody title='Color' initialOpen={true}>
+          <PanelRow>
+            <ColorPalette
+              disableCustomColors={true}
+              clearable={false}
+              colors={customColors}
+              value={currentColorValue}
+              onChange={handleColorChange}
+            />
+          </PanelRow>
+        </PanelBody>
+      </InspectorControls>
       <RichText
         // allowedFormats can be left an empty array to allow nothing
         allowedFormats={[]}
         tagName='a'
-        className={`btn btn--${props.attributes.size} btn--blue`}
+        className={`btn btn--${props.attributes.size} btn--${props.attributes.colorName}`}
         value={props.attributes.text}
         onChange={handleTextChange}
       />
@@ -108,7 +141,7 @@ function saveComponent(props) {
   return (
     <a
       href={props.attributes.linkObject.url}
-      className={`btn btn--${props.attributes.size} btn--blue`}
+      className={`btn btn--${props.attributes.size} btn--${props.attributes.colorName}`}
     >
       {props.attributes.text}
     </a>
