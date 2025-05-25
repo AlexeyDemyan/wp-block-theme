@@ -54,18 +54,6 @@ function editComponent() {
 
 function saveComponent() {
   return (
-    <div className='page-banner'>
-      <div
-        className='page-banner__bg-image'
-        style={{
-          backgroundImage:
-            "url('/wp-content/themes/fict-block-theme/images/library-hero.jpg')",
-        }}
-      ></div>
-      <div className='page-banner__content container t-center c-white'>
-        {/* pretty much receives whatever we insert in this InnerBlock in the editor and pipes it onto the frontend */}
-        <InnerBlocks.Content />
-      </div>
-    </div>
+    <InnerBlocks.Content/>
   );
 }

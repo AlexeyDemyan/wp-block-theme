@@ -225,21 +225,38 @@ add_filter('wp_insert_post_data', 'makeNotePrivate', 1, 2);
 
 class JSXBlock
 {
-    function __construct($name)
+    function __construct($name, $renderCallback = null)
     {
         $this->name = $name;
+        $this->renderCallback = $renderCallback;
         add_action('init', [$this, 'onInit']);
+    }
+
+    // when calling render_callback later, WP will pass arttributes and also nested content
+    // and we received those as parameters here:
+    function customRenderCallback($attributes, $content) {
+        ob_start();
+        require get_theme_file_path("/custom-blocks/{$this->name}.php");
+        return ob_get_clean();
     }
 
     function onInit()
     {
         wp_register_script($this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array('wp-blocks', 'wp-editor'));
-        register_block_type("customblocktheme/{$this->name}", array(
+
+        $customArgs = array(
             'editor_script' => $this->name
-        ));
+        );
+
+        if ($this->renderCallback) {
+            // render_callback is a reserved name
+            $customArgs['render_callback'] = [$this, 'customRenderCallback'];
+        }
+
+        register_block_type("customblocktheme/{$this->name}", $customArgs);
     }
 }
 
-new JSXBlock('banner');
+new JSXBlock('banner', true);
 new JSXBlock('genericheading');
 new JSXBlock('genericbutton');
