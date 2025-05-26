@@ -299,6 +299,10 @@ new PlaceholderBlock('footer');
 new PlaceholderBlock('singlepost');
 new PlaceholderBlock('page');
 new PlaceholderBlock('blogindex');
+new PlaceholderBlock('programarchive');
+new PlaceholderBlock('singleprogram');
+new PlaceholderBlock('singleprofessor');
+new PlaceholderBlock('mynotes');
 
 new JSXBlock('banner', true, ['fallbackimage' => get_theme_file_uri('/images/library-hero.jpg')]);
 new JSXBlock('genericheading');
