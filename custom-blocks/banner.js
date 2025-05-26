@@ -25,9 +25,10 @@ wp.blocks.registerBlockType('customblocktheme/banner', {
 
 function editComponent(props) {
   useEffect(() => {
-    async function go() {
+    if (props.attributes.imgID) {
+      async function go() {
       const response = await apiFetch({
-        path: `/wp/v2/media/${props.attributes.imdID}`,
+        path: `/wp/v2/media/${props.attributes.imgID}`,
         method: 'GET'
       });
       props.setAttributes({
@@ -35,11 +36,12 @@ function editComponent(props) {
       });
     }
     go();
-  }, [props.attributes.imdID]);
+    }
+  }, [props.attributes.imgID]);
 
   function onFileSelect(pic) {
     console.log(pic);
-    props.setAttributes({ imdID: pic.id });
+    props.setAttributes({ imgID: pic.id });
   }
 
   return (
@@ -51,7 +53,7 @@ function editComponent(props) {
             <MediaUploadCheck>
               <MediaUpload
                 onSelect={onFileSelect}
-                value={props.attributes.imdID}
+                value={props.attributes.imgID}
                 render={({ open }) => {
                   return <Button onClick={open}>Choose Image</Button>;
                 }}
