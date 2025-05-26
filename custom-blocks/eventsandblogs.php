@@ -1,0 +1,1 @@
+Ping from events and blogs php!
