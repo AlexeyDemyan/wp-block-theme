@@ -225,16 +225,18 @@ add_filter('wp_insert_post_data', 'makeNotePrivate', 1, 2);
 
 class JSXBlock
 {
-    function __construct($name, $renderCallback = null)
+    function __construct($name, $renderCallback = null, $data = null)
     {
         $this->name = $name;
+        $this->data = $data;
         $this->renderCallback = $renderCallback;
         add_action('init', [$this, 'onInit']);
     }
 
     // when calling render_callback later, WP will pass arttributes and also nested content
     // and we received those as parameters here:
-    function customRenderCallback($attributes, $content) {
+    function customRenderCallback($attributes, $content)
+    {
         ob_start();
         require get_theme_file_path("/custom-blocks/{$this->name}.php");
         return ob_get_clean();
@@ -243,6 +245,10 @@ class JSXBlock
     function onInit()
     {
         wp_register_script($this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array('wp-blocks', 'wp-editor'));
+
+        if ($this->data) {
+            wp_localize_script($this->name, $this->name, $this->data);
+        }
 
         $customArgs = array(
             'editor_script' => $this->name
@@ -257,6 +263,6 @@ class JSXBlock
     }
 }
 
-new JSXBlock('banner', true);
+new JSXBlock('banner', true, ['fallbackimage' => get_theme_file_uri('/images/library-hero.jpg')]);
 new JSXBlock('genericheading');
 new JSXBlock('genericbutton');

@@ -16,7 +16,8 @@ wp.blocks.registerBlockType('customblocktheme/banner', {
   attributes: {
     align: { type: 'string', default: 'full' },
     imgID: { type: 'number' },
-    imgURL: { type: 'string' },
+    // specifygin "window." is not necesary, just "banner.fallbackimage" should be enough
+    imgURL: { type: 'string', default: window.banner.fallbackimage },
   },
   edit: editComponent,
   save: saveComponent,
