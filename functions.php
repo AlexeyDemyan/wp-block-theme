@@ -309,3 +309,21 @@ new JSXBlock('genericheading');
 new JSXBlock('genericbutton');
 new JSXBlock('slideshow', true);
 new JSXBlock('slide', true, ['themeimagepath' => get_theme_file_uri('/images/')]);
+
+
+function myallowedblocks($allowed_block_types, $editor_context)
+{
+    // if editing a caetain professor post, user can only choose normal WP paragraph
+    if ($editor_context->post->post_type == 'professor') {
+        return array('core/paragraph');
+    }
+
+    // if user is on page or post editor screen, they can choose any blocks
+    if (!empty($editor_context->post)) {
+        return $allowed_block_types;
+    }
+    // if user is on full site editor screen, trying to edit a template, they can only add footer or header
+    return array('customblocktheme/header', 'customblocktheme/footer');
+};
+
+add_filter('allowed_block_types_all', 'myallowedblocks', 10, 2);
