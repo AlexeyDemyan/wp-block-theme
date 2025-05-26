@@ -1,5 +1,5 @@
 <?php
-if($attributes['themeimage']) {
+if (!empty($attributes['themeimage'])) {
     $attributes['imgURL'] = get_theme_file_uri('/images/' . $attributes['themeimage']);
 }
 
