@@ -50,6 +50,13 @@
     },
     "layout": {
       "contentSize": "1000px"
-    }
+    },
+    "customTemplates": [
+      {
+        "name": "emptycanvas",
+        "postTypes": ["page"],
+        "title": "Empty Canvas"
+      }
+    ]
   }
 }
