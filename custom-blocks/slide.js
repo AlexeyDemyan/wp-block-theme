@@ -18,12 +18,22 @@ wp.blocks.registerBlockType('customblocktheme/slide', {
     imgID: { type: 'number' },
     // specifygin "window." is not necesary, just "banner.fallbackimage" should be enough
     imgURL: { type: 'string', default: window.banner.fallbackimage },
+    themeimage: { type: 'string' },
   },
   edit: editComponent,
   save: saveComponent,
 });
 
 function editComponent(props) {
+  // empty array to only run this effect on initial load
+  useEffect(() => {
+    if (props.attributes.themeimage) {
+      props.setAttributes({
+        imgURL: `${slide.themeimagepath}${props.attributes.themeimage}`,
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (props.attributes.imgID) {
       async function go() {
@@ -32,6 +42,7 @@ function editComponent(props) {
           method: 'GET',
         });
         props.setAttributes({
+          themeimage: '',
           imgURL: response.media_details.sizes.pageBanner.source_url,
         });
       }
