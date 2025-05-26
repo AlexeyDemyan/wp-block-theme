@@ -27,15 +27,15 @@ function editComponent(props) {
   useEffect(() => {
     if (props.attributes.imgID) {
       async function go() {
-      const response = await apiFetch({
-        path: `/wp/v2/media/${props.attributes.imgID}`,
-        method: 'GET'
-      });
-      props.setAttributes({
-        imgURL: response.media_details.sizes.pageBanner.source_url,
-      });
-    }
-    go();
+        const response = await apiFetch({
+          path: `/wp/v2/media/${props.attributes.imgID}`,
+          method: 'GET',
+        });
+        props.setAttributes({
+          imgURL: response.media_details.sizes.pageBanner.source_url,
+        });
+      }
+      go();
     }
   }, [props.attributes.imgID]);
 
@@ -62,23 +62,23 @@ function editComponent(props) {
           </PanelRow>
         </PanelBody>
       </InspectorControls>
-      <div className='page-banner'>
-        <div
-          className='page-banner__bg-image'
-          style={{
-            backgroundImage:
-              `url('${props.attributes.imgURL}')`,
-          }}
-        ></div>
-        <div className='page-banner__content container t-center c-white'>
-          <InnerBlocks
-            allowedBlocks={[
-              'customblocktheme/genericheading',
-              'customblocktheme/genericbutton',
-              'core/paragraph',
-              'core/list',
-            ]}
-          />
+      <div
+        className='hero-slider__slide'
+        style={{
+          backgroundImage: `url('${props.attributes.imgURL}')`,
+        }}
+      >
+        <div class='hero-slider__interior container'>
+          <div class='hero-slider__overlay t-center'>
+            <InnerBlocks
+              allowedBlocks={[
+                'customblocktheme/genericheading',
+                'customblocktheme/genericbutton',
+                'core/paragraph',
+                'core/list',
+              ]}
+            />
+          </div>
         </div>
       </div>
     </>
